@@ -97,31 +97,31 @@ class Position:
 # TOKENS
 #######################################
 
-TT_INT              = 'INT'
-TT_FLOAT        = 'FLOAT'
-TT_STRING           = 'STRING'
-TT_IDENTIFIER   = 'IDENTIFIER'
-TT_KEYWORD      = 'KEYWORD'
-TT_PLUS         = 'PLUS'
-TT_MINUS        = 'MINUS'
-TT_MUL          = 'MUL'
-TT_DIV          = 'DIV'
-TT_POW              = 'POW'
-TT_EQ                   = 'EQ'
-TT_LPAREN       = 'LPAREN'
-TT_RPAREN       = 'RPAREN'
+TT_INT        = 'INT'
+TT_FLOAT      = 'FLOAT'
+TT_STRING     = 'STRING'
+TT_IDENTIFIER = 'IDENTIFIER'
+TT_KEYWORD    = 'KEYWORD'
+TT_PLUS       = 'PLUS'
+TT_MINUS      = 'MINUS'
+TT_MUL        = 'MUL'
+TT_DIV        = 'DIV'
+TT_POW        = 'POW'
+TT_EQ         = 'EQ'
+TT_LPAREN     = 'LPAREN'
+TT_RPAREN     = 'RPAREN'
 TT_LSQUARE    = 'LSQUARE'
 TT_RSQUARE    = 'RSQUARE'
-TT_EE                   = 'EE'
-TT_NE                   = 'NE'
-TT_LT                   = 'LT'
-TT_GT                   = 'GT'
-TT_LTE              = 'LTE'
-TT_GTE              = 'GTE'
-TT_COMMA            = 'COMMA'
-TT_ARROW            = 'ARROW'
-TT_NEWLINE      = 'NEWLINE'
-TT_EOF              = 'EOF'
+TT_EE         = 'EE'
+TT_NE         = 'NE'
+TT_LT         = 'LT'
+TT_GT         = 'GT'
+TT_LTE        = 'LTE'
+TT_GTE        = 'GTE'
+TT_COMMA      = 'COMMA'
+TT_ARROW      = 'ARROW'
+TT_NEWLINE    = 'NEWLINE'
+TT_EOF        = 'EOF'
 
 KEYWORDS = [
   'VAR',
@@ -1866,8 +1866,8 @@ BuiltInFunction.is_function = BuiltInFunction("is_function")
 BuiltInFunction.append      = BuiltInFunction("append")
 BuiltInFunction.pop         = BuiltInFunction("pop")
 BuiltInFunction.extend      = BuiltInFunction("extend")
-BuiltInFunction.len                 = BuiltInFunction("len")
-BuiltInFunction.run                 = BuiltInFunction("run")
+BuiltInFunction.len         = BuiltInFunction("len")
+BuiltInFunction.run         = BuiltInFunction("run")
 
 #######################################
 # CONTEXT
@@ -2189,6 +2189,27 @@ def run(fn, text):
   # Generate AST
   parser = Parser(tokens)
   ast = parser.parse()
+  #print(ast.node.element_nodes)
+  if ast.error: return None, ast.error
+
+  # Run program
+  interpreter = Interpreter()
+  context = Context('<program>')
+  context.symbol_table = global_symbol_table
+  result = interpreter.visit(ast.node, context)
+
+  return result.value, result.error
+
+def runm(fn, text):
+  # Generate tokens
+  lexer = Lexer(fn, text)
+  tokens, error = lexer.make_tokens()
+  if error: return None, error
+  
+  # Generate AST
+  parser = Parser(tokens)
+  ast = parser.parse()
+  print(ast.node.element_nodes)
   if ast.error: return None, ast.error
 
   # Run program
